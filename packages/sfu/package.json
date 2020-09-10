@@ -27,7 +27,7 @@
   "dependencies": {
     "awaitqueue": "^2.1.1",
     "express": "^4.17.1",
-    "mediasoup": "3.6.19",
+    "mediasoup": "https://github.com/mattkrick/mediasoup/tarball/674e240bd84a916ccd0ea78173217a297a97bf40",
     "parabol-server": "^5.16.1"
   }
 }
