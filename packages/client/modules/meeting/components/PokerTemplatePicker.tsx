@@ -6,6 +6,7 @@ import NewMeetingDropdown from '../../../components/NewMeetingDropdown'
 import useModal from '../../../hooks/useModal'
 import lazyPreload from '../../../utils/lazyPreload'
 import {PokerTemplatePicker_settings} from '../../../__generated__/PokerTemplatePicker_settings.graphql'
+import PokerTemplateModal from './PokerTemplateModal'
 
 interface Props {
   settings: PokerTemplatePicker_settings
@@ -26,7 +27,7 @@ const PokerTemplatePicker = (props: Props) => {
   const {settings} = props
   const {selectedTemplate} = settings
   const {name: templateName} = selectedTemplate
-  const {togglePortal} = useModal({id: 'templateModal'})
+  const {togglePortal, modalPortal} = useModal({id: 'templateModal'})
   return (
     <>
       <Dropdown
@@ -35,7 +36,7 @@ const PokerTemplatePicker = (props: Props) => {
         onClick={togglePortal}
         onMouseEnter={ReflectTemplateModal.preload}
       />
-      {/* {modalPortal(<ReflectTemplateModal retroMeetingSettings={settings} />)} */}
+      {modalPortal(<PokerTemplateModal pokerMeetingSettings={settings} />)}
     </>
   )
 }
@@ -43,6 +44,7 @@ const PokerTemplatePicker = (props: Props) => {
 export default createFragmentContainer(PokerTemplatePicker, {
   settings: graphql`
     fragment PokerTemplatePicker_settings on PokerMeetingSettings {
+      ...PokerTemplateModal_pokerMeetingSettings
       selectedTemplate {
         id
         name

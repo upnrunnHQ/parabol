@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import graphql from 'babel-plugin-relay/macro'
 import React from 'react'
 import {createFragmentContainer} from 'react-relay'
-import createTemplateHeader from '../../../../../static/images/illustrations/createTemplateHeader.svg'
+import customTemplate from '../../../../../static/images/illustrations/customTemplate.svg'
 import {PALETTE} from '../../../styles/paletteV2'
 import getTemplateList from '../../../utils/getTemplateList'
 import makeTemplateDescription from '../../../utils/makeTemplateDescription'
@@ -75,7 +75,7 @@ const PokerTemplateDetails = (props: Props) => {
   return (
     <PromptEditor>
       <Scrollable>
-        <CreateTemplateImg src={createTemplateHeader} />
+        <CreateTemplateImg src={customTemplate} />
         <TemplateHeader>
           <FirstLine>
             <EditableTemplateName

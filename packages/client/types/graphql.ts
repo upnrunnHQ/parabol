@@ -1573,28 +1573,7 @@ export interface ITeam {
   /**
    * The datetime the team was last updated
    */
-  token: string;
-}
-
-/**
- * The team settings for a specific type of meeting
- */
-export type TeamMeetingSettings =
-  | IRetrospectiveMeetingSettings
-<<<<<<< HEAD
-  | IPokerMeetingSettings
-  | IActionMeetingSettings;
-=======
-  | IActionMeetingSettings
-  | IPokerMeetingSettings;
->>>>>>> a5e551c7f... Turn on feature flag for sprint poker template
-
-/**
- * The team settings for a specific type of meeting
- */
-export interface ITeamMeetingSettings {
-  __typename: 'TeamMeetingSettings';
-  id: string;
+  updatedAt: any | null;
 
   /**
    * @deprecated "Field no longer needs to exist for now"
@@ -5173,22 +5152,22 @@ export interface IPokerMeetingSettings {
   /**
    * The template that will be used to start the Poker meeting
    */
-  selectedTemplate: IReflectTemplate;
+  selectedTemplate: IPokerTemplate;
 
   /**
    * The list of templates used to start a Poker meeting
    */
-  teamTemplates: Array<IReflectTemplate>;
+  teamTemplates: Array<IPokerTemplate>;
 
   /**
    * The list of templates shared across the organization to start a Poker meeting
    */
-  organizationTemplates: IReflectTemplateConnection;
+  organizationTemplates: IPokerTemplateConnection;
 
   /**
    * The list of templates shared across the organization to start a Poker meeting
    */
-  publicTemplates: IReflectTemplateConnection;
+  publicTemplates: IPokerTemplateConnection;
 }
 
 export interface IOrganizationTemplatesOnPokerMeetingSettingsArguments {
@@ -5249,8 +5228,8 @@ export interface IJiraSearchQuery {
 /**
  * A connection to a list of items.
  */
-export interface IReflectTemplateConnection {
-  __typename: 'ReflectTemplateConnection';
+export interface IPokerTemplateConnection {
+  __typename: 'PokerTemplateConnection';
 
   /**
    * Information to aid in pagination.
@@ -5260,19 +5239,19 @@ export interface IReflectTemplateConnection {
   /**
    * A list of edges.
    */
-  edges: Array<IReflectTemplateEdge>;
+  edges: Array<IPokerTemplateEdge>;
 }
 
 /**
  * An edge in a connection.
  */
-export interface IReflectTemplateEdge {
-  __typename: 'ReflectTemplateEdge';
+export interface IPokerTemplateEdge {
+  __typename: 'PokerTemplateEdge';
 
   /**
    * The item at the end of the edge
    */
-  node: IReflectTemplate;
+  node: IPokerTemplate;
 
   /**
    * A cursor for use in pagination
@@ -5578,6 +5557,40 @@ export interface IPublicTemplatesOnRetrospectiveMeetingSettingsArguments {
    * The cursor, which is the templateId
    */
   after?: string | null;
+}
+
+/**
+ * A connection to a list of items.
+ */
+export interface IReflectTemplateConnection {
+  __typename: 'ReflectTemplateConnection';
+
+  /**
+   * Information to aid in pagination.
+   */
+  pageInfo: IPageInfo;
+
+  /**
+   * A list of edges.
+   */
+  edges: Array<IReflectTemplateEdge>;
+}
+
+/**
+ * An edge in a connection.
+ */
+export interface IReflectTemplateEdge {
+  __typename: 'ReflectTemplateEdge';
+
+  /**
+   * The item at the end of the edge
+   */
+  node: IReflectTemplate;
+
+  /**
+   * A cursor for use in pagination
+   */
+  cursor: string;
 }
 
 /**
@@ -9299,82 +9312,10 @@ export interface IInviteToTeamPayload {
    */
   teamInvitationNotificationId: string | null;
 
-/**
- * The retro-specific meeting settings
- */
-export interface IPokerMeetingSettings {
-  __typename: 'PokerMeetingSettings';
-  id: string;
-
   /**
-   * The type of meeting these settings apply to
+   * The notification sent to the invitee if they are a parabol user
    */
-  meetingType: MeetingTypeEnum;
-
-  /**
-   * The broad phase types that will be addressed during the meeting
-   */
-  phaseTypes: Array<NewMeetingPhaseTypeEnum>;
-
-  /**
-   * FK
-   */
-  teamId: string;
-
-  /**
-   * The team these settings belong to
-   */
-  team: ITeam;
-
-  /**
-   * FK. The template that will be used to start the poker meeting
-   */
-  selectedTemplateId: string;
-
-  /**
-   * The template that will be used to start the Poker meeting
-   */
-  selectedTemplate: IReflectTemplate;
-
-  /**
-   * The list of templates used to start a Poker meeting
-   */
-  teamTemplates: Array<IReflectTemplate>;
-
-  /**
-   * The list of templates shared across the organization to start a Poker meeting
-   */
-  organizationTemplates: IReflectTemplateConnection;
-
-  /**
-   * The list of templates shared across the organization to start a Poker meeting
-   */
-  publicTemplates: IReflectTemplateConnection;
-}
-
-export interface IOrganizationTemplatesOnPokerMeetingSettingsArguments {
-  first: number;
-
-  /**
-   * The cursor, which is the templateId
-   */
-  after?: string | null;
-}
-
-export interface IPublicTemplatesOnPokerMeetingSettingsArguments {
-  first: number;
-
-  /**
-   * The cursor, which is the templateId
-   */
-  after?: string | null;
-}
-
-/**
- * A team-specific retro phase. Usually 3 or 4 exist per team, eg Good/Bad/Change, 4Ls, etc.
- */
-export interface IRetroPhaseItem {
-  __typename: 'RetroPhaseItem';
+  teamInvitationNotification: INotificationTeamInvitation | null;
 
   /**
    * the `invite your team` suggested action that was removed, if any
