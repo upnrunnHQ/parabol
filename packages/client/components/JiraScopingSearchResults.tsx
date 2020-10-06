@@ -63,21 +63,8 @@ const JiraScopingSearchResults = (props: Props) => {
 }
 
 export default createFragmentContainer(JiraScopingSearchResults, {
-  viewer: graphql`
-    fragment JiraScopingSearchResults_viewer on User {
-      team(teamId: $teamId) {
-        jiraIssues(first: $first, queryString: $queryString, isJQL: $isJQL, projectKeyFilters: $projectKeyFilters) @connection(key: "JiraScopingSearchResults_jiraIssues") {
-          error {
-            message
-          }
-          edges {
-            node {
-              ...JiraScopingSearchResultItem_issue
-              id
-            }
-          }
-        }
-      }
+  meeting: graphql`
+    fragment JiraScopingSearchResults_meeting on PokerMeeting {
       id
       phases {
         phaseType
