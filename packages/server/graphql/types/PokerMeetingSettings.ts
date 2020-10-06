@@ -53,7 +53,10 @@ const PokerMeetingSettings = new GraphQLObjectType<any, GQLContext>({
       description: 'The list of templates used to start a Poker meeting',
       resolve: async ({teamId}, _args, {dataLoader}) => {
         const templates = await dataLoader.get('meetingTemplatesByTeamId').load(teamId)
-        const scoredTemplates = await getScoredTemplates(templates, 0.9)
+        const teamTemplates = templates.filter(
+          (template) => template.scope === 'TEAM' && template.type == 'poker'
+        )
+        const scoredTemplates = await getScoredTemplates(teamTemplates, 0.9)
         return scoredTemplates
       }
     },
@@ -74,7 +77,7 @@ const PokerMeetingSettings = new GraphQLObjectType<any, GQLContext>({
         const {orgId} = team
         const templates = await dataLoader.get('meetingTemplatesByOrgId').load(orgId)
         const organizationTemplates = templates.filter(
-          (template) => template.scope !== 'TEAM' && template.teamId !== teamId
+          (template) => template.scope !== 'TEAM' && template.teamId !== teamId && template.type == 'poker'
         )
         const scoredTemplates = await getScoredTemplates(organizationTemplates, 0.8)
         return connectionFromTemplateArray(scoredTemplates, first, after)
