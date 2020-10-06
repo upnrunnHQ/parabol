@@ -124,14 +124,9 @@ type JiraIssueUpdateMetadata = any
 type JiraPageOfChangelogs = any
 type JiraVersionedRepresentations = any
 type JiraIncludedFields = any
-interface JiraIssueFields {
-  description: any
-  summary: string
-  // assignee: string
-}
 
 
-interface JiraIssueBean {
+interface JiraIssueBean<F = {description: any, summary: string}> {
   expand: string
   id: string
   self: string
@@ -146,7 +141,7 @@ interface JiraIssueBean {
   changelog: JiraPageOfChangelogs
   versionedRepresentations: JiraVersionedRepresentations
   fieldsToInclude: JiraIncludedFields
-  fields: JiraIssueFields
+  fields: F
 
 }
 
@@ -316,8 +311,177 @@ export default abstract class AtlassianManager {
       | JiraError
   }
 
+  async getCloudNameLookup() {
+    const sites = await this.getAccessibleResources()
+    const cloudNameLookup = {} as {[cloudId: string]: string}
+    if ('message' in sites) {
+      return cloudNameLookup
+    }
+    sites.forEach((site) => {
+      cloudNameLookup[site.id] = site.name
+    })
+    return cloudNameLookup
+  }
+
   async getIssue(cloudId: string, issueKey: string) {
-    return this.get(`https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/issue/${issueKey}?fields=summary,description`) as AtlassianError | JiraError | JiraIssueBean
+    const [cloudNameLookup, issueRes] = await Promise.all([
+      this.getCloudNameLookup(),
+      this.get(`https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/issue/${issueKey}?fields=summary,description`) as AtlassianError | JiraError | JiraIssueBean
+    ])
+    if ('fields' in issueRes) {
+      (issueRes.fields as any).cloudName = cloudNameLookup[cloudId]
+    }
+    return issueRes as AtlassianError | JiraError | JiraIssueBean<{description: any, summary: string, cloudName: string}>
+  }
+
+  async getIssues(queryString: string, isJQL: boolean, projectKeyFilters: {cloudId: string, projectId?: string}[]) {
+    const projectsByCloudId = {} as {[cloudId: string]: string[]}
+    projectKeyFilters.forEach((project) => {
+      const {cloudId, projectId} = project
+      projectsByCloudId[cloudId] = projectsByCloudId[cloudId] || []
+      if (projectId) {
+        projectsByCloudId[cloudId].push(projectId)
+      }
+    })
+    const cloudIds = Object.keys(projectsByCloudId)
+    const allIssues = [] as {id: number, key: string, summary: string, cloudId: string, cloudName: string}[]
+    let firstError: string | null = null
+
+    const reqs = cloudIds.map(async (cloudId) => {
+      // TODO add project filter
+      // const projects = projectsByCloudId[cloudId]
+      const order = 'order by lastViewed DESC'
+      const jql = queryString ? isJQL ? queryString : `text ~ \"${queryString}\" ${order}` : order
+      const url = `https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/search`
+      const payload = {
+        jql,
+        maxResults: 100,
+        fields: ['summary', 'description']
+      }
+      // TODO add type
+      const res = await this.post(url, payload) as AtlassianError | JiraError | JiraSearchResponse
+      if ('issues' in res) {
+        const {issues} = res
+        issues.forEach((issue) => {
+          const {id, key, fields} = issue
+          const {summary} = fields
+          allIssues.push({key, summary, cloudId, id: Number(id), cloudName: ''})
+        })
+      }
+    })
+    const [cloudNameLookup] = await Promise.all([
+      this.getCloudNameLookup() as any,
+      ...reqs
+    ])
+    allIssues.forEach((issue) => {
+      issue.cloudName = cloudNameLookup[issue.cloudId]
+    })
+    return {error: firstError, issues: allIssues}
+  }
+
+  async getComments(cloudId: string, issueKey: string) {
+    return this.get(`https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/issue/${issueKey}/comment`) as any
+  }
+
+  async getFields(cloudId: string) {
+    return this.get(`https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/field`) as JiraField[]
+  }
+
+  async addComment(cloudId: string, issueKey: string, body: object) {
+    const payload = {
+      body
+    }
+    return this.post(`https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/issue/${issueKey}/comment`, payload) as any
+  }
+
+  async updateStoryPoints(cloudId: string, issueKey: string, storyPoints: string | number, dimensionName: string | null) {
+    // try to update the field by dimension name.
+    // if the dimension name is null, use the jira defaults
+    // if we can't trigger an update, then just write a comment
+    const fields = await this.getFields(cloudId)
+    const searchFields = fields.map((field) => ({
+      ...field,
+      searchName: field.name.toLowerCase().trim()
+    }))
+
+    let fieldsToTry = [] as JiraField[]
+    if (!dimensionName) {
+      const namesToTry = ['Story Points', 'Story point estimate'].map((val) => val.toLowerCase())
+      fieldsToTry = searchFields.filter((field) => namesToTry.includes(field.searchName))
+    } else {
+      const normalizedDimensionName = dimensionName.toLowerCase().trim()
+      fieldsToTry = searchFields.filter((field) => field.searchName === normalizedDimensionName)
+    }
+
+    let updatedFieldSuccess = false
+    if (fieldsToTry.length > 0) {
+      const res = await Promise.all(fieldsToTry.map((field) => {
+        const {id} = field
+        const payload = {
+          fields: {
+            [id]: storyPoints
+          }
+        }
+        return this.put(`https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/issue/${issueKey}`, payload)
+      }))
+      updatedFieldSuccess = res.indexOf(null) !== -1
+    }
+    if (!updatedFieldSuccess) {
+      await this.addComment(cloudId, issueKey, {
+        "version": 1,
+        "type": "doc",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "This issue is worth "
+              },
+              {
+                "type": "text",
+                "text": `${storyPoints} story points`,
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "text": "."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Visit the meeting where it happened at "
+              },
+              {
+                "type": "text",
+                "text": "Parabol",
+                "marks": [
+                  {
+                    "type": "link",
+                    "attrs": {
+                      "href": "http://action.parabol.co"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "text": "."
+              }
+            ]
+          }
+        ]
+      })
+    }
+    return true
   }
 
   async getIssues(queryString: string, isJQL: boolean, projectKeyFilters: {cloudId: string, projectId?: string}[]) {
