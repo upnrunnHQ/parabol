@@ -3,7 +3,6 @@ import graphql from 'babel-plugin-relay/macro'
 import React, {useState} from 'react'
 import {DraggableProvided} from 'react-beautiful-dnd'
 import {createFragmentContainer} from 'react-relay'
-import useAtmosphere from '~/hooks/useAtmosphere'
 import useMutationProps from '~/hooks/useMutationProps'
 import {TemplateDimensionItem_dimensions} from '~/__generated__/TemplateDimensionItem_dimensions.graphql'
 import Icon from '../../../components/Icon'
@@ -11,8 +10,8 @@ import Icon from '../../../components/Icon'
 import {PALETTE} from '../../../styles/paletteV2'
 import {ICON_SIZE} from '../../../styles/typographyV2'
 import {TemplateDimensionItem_dimension} from '../../../__generated__/TemplateDimensionItem_dimension.graphql'
-import EditableTemplateDescription from './EditableTemplateDescription'
 import EditableTemplateDimension from './EditableTemplateDimension'
+import TemplateScalePicker from './TemplateScalePicker'
 //import EditableTemplateDimensionColor from './EditableTemplateDimensionColor'
 
 interface Props {
@@ -56,20 +55,12 @@ const RemoveDimensionIcon = styled(Icon)<StyledProps>(({isHover}) => ({
   width: 24
 }))
 
-const DimensionAndDescription = styled('div')({
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  paddingLeft: 16
-})
-
 const TemplateDimensionItem = (props: Props) => {
   const {dragProvided, isDragging, isOwner, dimension, dimensions} = props
   const {id: dimensionId, name: dimensionName} = dimension
   const [isHover, setIsHover] = useState(false)
-  const [isEditingDescription, setIsEditingDescription] = useState(false)
-  const {submitting, submitMutation, onError, onCompleted} = useMutationProps()
-  const atmosphere = useAtmosphere()
+  const [isEditingDescription] = useState(false)
+  const {submitting, submitMutation, onError} = useMutationProps()
   const canRemove = dimensions.length > 1 && isOwner
   const onMouseEnter = () => {
     setIsHover(true)
@@ -103,22 +94,15 @@ const TemplateDimensionItem = (props: Props) => {
           cancel
         </RemoveDimensionIcon>
       )}
-      < DimensionAndDescription >
-        <EditableTemplateDimension
-          isOwner={isOwner}
-          isEditingDescription={isEditingDescription}
-          isHover={isHover}
-          dimensionName={dimensionName}
-          dimensionId={dimensionId}
-          dimensions={dimensions}
-        />
-        {/* <EditableTemplateDescription
-          isOwner={isOwner}
-          description={description}
-          onEditingChange={setIsEditingDescription}
-          dimensionId={dimensionId}
-        /> */}
-      </DimensionAndDescription>
+      <EditableTemplateDimension
+        isOwner={isOwner}
+        isEditingDescription={isEditingDescription}
+        isHover={isHover}
+        dimensionName={dimensionName}
+        dimensionId={dimensionId}
+        dimensions={dimensions}
+      />
+      <TemplateScalePicker selectedScale={dimension.scale} scales={dimension.template.scales} />
     </DimensionItem >
   )
 }
@@ -135,6 +119,14 @@ export default createFragmentContainer(TemplateDimensionItem, {
       id
       name
       description
+      scale {
+        ...TemplateScalePicker_selectedScale
+      }
+      template {
+        scales {
+          ...TemplateScalePicker_scales
+        }
+      }
     }
   `
 })

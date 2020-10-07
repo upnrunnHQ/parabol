@@ -6,16 +6,15 @@ import NewMeetingDropdown from '../../../components/NewMeetingDropdown'
 import useModal from '../../../hooks/useModal'
 import lazyPreload from '../../../utils/lazyPreload'
 import {PokerTemplatePicker_settings} from '../../../__generated__/PokerTemplatePicker_settings.graphql'
-import PokerTemplateModal from './PokerTemplateModal'
 
 interface Props {
   settings: PokerTemplatePicker_settings
 }
 
-const ReflectTemplateModal = lazyPreload(() =>
+const PokerTemplateModal = lazyPreload(() =>
   import(
-    /* webpackChunkName: 'ReflectTemplateModal' */
-    './ReflectTemplateModal'
+    /* webpackChunkName: 'PokerTemplateModal' */
+    './PokerTemplateModal'
   )
 )
 
@@ -27,14 +26,14 @@ const PokerTemplatePicker = (props: Props) => {
   const {settings} = props
   const {selectedTemplate} = settings
   const {name: templateName} = selectedTemplate
-  const {togglePortal, modalPortal} = useModal({id: 'templateModal'})
+  const {togglePortal, modalPortal} = useModal({id: 'pokerTemplateModal'})
   return (
     <>
       <Dropdown
         icon={'question_answer'}
         label={templateName}
         onClick={togglePortal}
-        onMouseEnter={ReflectTemplateModal.preload}
+        onMouseEnter={PokerTemplateModal.preload}
       />
       {modalPortal(<PokerTemplateModal pokerMeetingSettings={settings} />)}
     </>
