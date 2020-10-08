@@ -10,6 +10,7 @@ import JiraSearchQuery from './JiraSearchQuery'
 import ms from 'ms'
 import getRethink from '../../database/rethinkDriver'
 import PokerTemplate, {PokerTemplateConnection} from './PokerTemplate'
+import {MeetingTypeEnum} from 'parabol-client/types/graphql'
 
 const PokerMeetingSettings = new GraphQLObjectType<any, GQLContext>({
   name: 'PokerMeetingSettings',
@@ -54,7 +55,7 @@ const PokerMeetingSettings = new GraphQLObjectType<any, GQLContext>({
       resolve: async ({teamId}, _args, {dataLoader}) => {
         const templates = await dataLoader.get('meetingTemplatesByTeamId').load(teamId)
         const teamTemplates = templates.filter(
-          (template) => template.scope === 'TEAM' && template.type == 'poker'
+          (template) => template.scope === 'TEAM' && template.type === MeetingTypeEnum.poker
         )
         const scoredTemplates = await getScoredTemplates(teamTemplates, 0.9)
         return scoredTemplates
@@ -77,7 +78,7 @@ const PokerMeetingSettings = new GraphQLObjectType<any, GQLContext>({
         const {orgId} = team
         const templates = await dataLoader.get('meetingTemplatesByOrgId').load(orgId)
         const organizationTemplates = templates.filter(
-          (template) => template.scope !== 'TEAM' && template.teamId !== teamId && template.type == 'poker'
+          (template) => template.scope !== 'TEAM' && template.teamId !== teamId && template.type === MeetingTypeEnum.poker
         )
         const scoredTemplates = await getScoredTemplates(organizationTemplates, 0.8)
         return connectionFromTemplateArray(scoredTemplates, first, after)
@@ -97,7 +98,7 @@ const PokerMeetingSettings = new GraphQLObjectType<any, GQLContext>({
       },
       resolve: async ({teamId}, {first, after}, {dataLoader}) => {
         const [publicTemplates, team] = await Promise.all([
-          db.read('publicTemplates', 'poker'),
+          db.read('publicTemplates', MeetingTypeEnum.poker),
           dataLoader.get('teams').load(teamId)
         ])
         const {orgId} = team

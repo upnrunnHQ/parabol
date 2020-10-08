@@ -1,11 +1,11 @@
 import graphql from 'babel-plugin-relay/macro'
 import {commitMutation} from 'react-relay'
-import {IReflectTemplate} from '../types/graphql'
+import {IReflectTemplate, MeetingTypeEnum} from '../types/graphql'
 import {SharedUpdater, StandardMutation} from '../types/relayMutations'
 import getInProxy from '../utils/relay/getInProxy'
 import {RemoveReflectTemplateMutation as TRemoveReflectTemplateMutation} from '../__generated__/RemoveReflectTemplateMutation.graphql'
 import {RemoveReflectTemplateMutation_team} from '../__generated__/RemoveReflectTemplateMutation_team.graphql'
-import handleRemoveReflectTemplate from './handlers/handleRemoveReflectTemplate'
+import handleRemoveTemplate from './handlers/handleRemoveTemplate'
 
 graphql`
   fragment RemoveReflectTemplateMutation_team on RemoveReflectTemplatePayload {
@@ -36,7 +36,7 @@ export const removeReflectTemplateTeamUpdater: SharedUpdater<RemoveReflectTempla
 ) => {
   const templateId = getInProxy(payload, 'reflectTemplate', 'id')
   const teamId = getInProxy(payload, 'reflectTemplate', 'teamId')
-  handleRemoveReflectTemplate(templateId, teamId, store)
+  handleRemoveTemplate(templateId, teamId, store, MeetingTypeEnum.retrospective)
 }
 
 const RemoveReflectTemplateMutation: StandardMutation<TRemoveReflectTemplateMutation> = (
@@ -58,7 +58,7 @@ const RemoveReflectTemplateMutation: StandardMutation<TRemoveReflectTemplateMuta
       const {templateId} = variables
       const template = store.get<IReflectTemplate>(templateId)!
       const teamId = template.getValue('teamId')
-      handleRemoveReflectTemplate(templateId, teamId, store)
+      handleRemoveTemplate(templateId, teamId, store, MeetingTypeEnum.retrospective)
     }
   })
 }

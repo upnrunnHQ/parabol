@@ -63,7 +63,7 @@ export default createFragmentContainer(PokerTemplateListOrg, {
         id
         meetingSettings(meetingType: poker) {
           ... on PokerMeetingSettings {
-            organizationTemplates(first: 20) @connection(key: "PokerTemplateListOrg_organizationTemplates") {
+            organizationTemplates(first: 20) @connection(key: "pokerTemplateListOrg_organizationTemplates") {
               edges {
                 node {
                   ...PokerTemplateItem_template

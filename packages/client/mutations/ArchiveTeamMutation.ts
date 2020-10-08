@@ -16,8 +16,8 @@ import {
 import handleRemoveSuggestedActions from './handlers/handleRemoveSuggestedActions'
 import onMeetingRoute from '../utils/onMeetingRoute'
 import SetNotificationStatusMutation from './SetNotificationStatusMutation'
-import {NotificationStatusEnum} from '~/types/graphql'
-import handleRemoveReflectTemplate from './handlers/handleRemoveReflectTemplate'
+import {MeetingTypeEnum, NotificationStatusEnum} from '~/types/graphql'
+import handleRemoveTemplate from './handlers/handleRemoveTemplate'
 
 graphql`
   fragment ArchiveTeamMutation_team on ArchiveTeamPayload {
@@ -123,7 +123,8 @@ const ArchiveTeamMutation: StandardMutation<TArchiveTeamMutation, HistoryLocalHa
       const team = payload.getLinkedRecord('team')
       const teamId = team.getValue('id')
       teamTemplateIds?.forEach((templateId) => {
-        handleRemoveReflectTemplate(templateId, teamId, store)
+        handleRemoveTemplate(templateId, teamId, store, MeetingTypeEnum.retrospective)
+        handleRemoveTemplate(templateId, teamId, store, MeetingTypeEnum.poker)
       })
       archiveTeamTeamUpdater(payload, {atmosphere, store})
       const removedSuggestedActionIds = payload.getValue('removedSuggestedActionIds')

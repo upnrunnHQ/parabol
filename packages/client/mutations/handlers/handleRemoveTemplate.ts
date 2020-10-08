@@ -2,22 +2,22 @@ import {RecordSourceSelectorProxy} from 'relay-runtime'
 import {IRetrospectiveMeetingSettings, MeetingTypeEnum} from '../../types/graphql'
 import safeRemoveNodeFromArray from '../../utils/relay/safeRemoveNodeFromArray'
 import safeRemoveNodeFromConn from '../../utils/relay/safeRemoveNodeFromConn'
-import getReflectTemplateOrgConn from '../connections/getReflectTemplateOrgConn'
-import getReflectTemplatePublicConn from '../connections/getReflectTemplatePublicConn'
+import getTemplateOrgConn from '../connections/getTemplateOrgConn'
+import getTemplatePublicConn from '../connections/getTemplatePublicConn'
 import pluralizeHandler from './pluralizeHandler'
 
-const handleRemoveReflectTemplate = (templateId: string, teamId: string, store: RecordSourceSelectorProxy<any>) => {
+const handleRemoveTemplate = (templateId: string, teamId: string, store: RecordSourceSelectorProxy<any>, meetingType: MeetingTypeEnum) => {
   const team = store.get(teamId)!
   const settings = team.getLinkedRecord<IRetrospectiveMeetingSettings>('meetingSettings', {
-    meetingType: MeetingTypeEnum.retrospective
+    meetingType: meetingType
   })
   safeRemoveNodeFromArray(templateId, settings, 'teamTemplates')
-  const orgConn = getReflectTemplateOrgConn(settings)
-  const publicConn = getReflectTemplatePublicConn(settings)
+  const orgConn = getTemplateOrgConn(settings)
+  const publicConn = getTemplatePublicConn(settings)
   safeRemoveNodeFromConn(templateId, orgConn)
   safeRemoveNodeFromConn(templateId, publicConn)
 
 }
 
-const handleRemoveReflectTemplates = pluralizeHandler(handleRemoveReflectTemplate)
-export default handleRemoveReflectTemplates
+const handleRemoveTemplates = pluralizeHandler(handleRemoveTemplate)
+export default handleRemoveTemplates

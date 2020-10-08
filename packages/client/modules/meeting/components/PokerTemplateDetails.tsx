@@ -8,10 +8,10 @@ import getTemplateList from '../../../utils/getTemplateList'
 import makeTemplateDescription from '../../../utils/makeTemplateDescription'
 import {PokerTemplateDetails_settings} from '../../../__generated__/PokerTemplateDetails_settings.graphql'
 import CloneTemplate from './CloneTemplate'
-import RemoveTemplate from './RemoveTemplate'
 import TemplateSharing from './TemplateSharing'
 import TemplateDimensionList from './TemplateDimensionList'
 import EditablePokerTemplateName from './EditablePokerTemplateName'
+import RemovePokerTemplate from './RemovePokerTemplate'
 
 const TemplateHeader = styled('div')({
   display: 'flex',
@@ -86,7 +86,7 @@ const PokerTemplateDetails = (props: Props) => {
               isOwner={isOwner}
             />
             {isOwner && (
-              <RemoveTemplate
+              <RemovePokerTemplate
                 templateId={templateId}
                 teamId={teamId}
                 teamTemplates={teamTemplates}
@@ -133,7 +133,7 @@ export default createFragmentContainer(PokerTemplateDetails, {
       }
       teamTemplates {
         ...EditablePokerTemplateName_teamTemplates
-        ...RemoveTemplate_teamTemplates
+        ...RemovePokerTemplate_teamTemplates
       }
       team {
         id

@@ -2,10 +2,10 @@ import {RecordSourceSelectorProxy} from 'relay-runtime'
 import pluralizeHandler from './pluralizeHandler'
 import removeFromRefs from '../../utils/relay/removeFromRefs'
 
-const handleRemoveReflectTemplatePrompt = (promptId: string, store: RecordSourceSelectorProxy) => {
+const handleRemoveTemplatePrompt = (promptId: string, store: RecordSourceSelectorProxy) => {
   store.delete(promptId)
   removeFromRefs(promptId, store, {ReflectTemplate: ['prompts']})
 }
 
-const handleRemoveReflectTemplatePrompts = pluralizeHandler(handleRemoveReflectTemplatePrompt)
-export default handleRemoveReflectTemplatePrompts
+const handleRemoveTemplatePrompts = pluralizeHandler(handleRemoveTemplatePrompt)
+export default handleRemoveTemplatePrompts

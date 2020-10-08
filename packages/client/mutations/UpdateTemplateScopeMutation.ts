@@ -12,7 +12,7 @@ import safeRemoveNodeFromArray from '../utils/relay/safeRemoveNodeFromArray'
 import safeRemoveNodeFromConn from '../utils/relay/safeRemoveNodeFromConn'
 import {UpdateTemplateScopeMutation as TUpdateTemplateScopeMutation} from '../__generated__/UpdateTemplateScopeMutation.graphql'
 import {SharingScopeEnum, UpdateTemplateScopeMutation_organization} from '../__generated__/UpdateTemplateScopeMutation_organization.graphql'
-import getReflectTemplateOrgConn from './connections/getReflectTemplateOrgConn'
+import getTemplateOrgConn from './connections/getTemplateOrgConn'
 
 graphql`
   fragment UpdateTemplateScopeMutation_organization on UpdateTemplateScopeSuccess {
@@ -50,7 +50,7 @@ const removeTemplateFromCurrentScope = (templateId: string, scopeList: SharingSc
   if (scopeList === 'TEAM') {
     safeRemoveNodeFromArray(templateId, meetingSettings, 'teamTemplates')
   } else if (scopeList === 'ORGANIZATION') {
-    const orgTemplatesConn = getReflectTemplateOrgConn(meetingSettings)
+    const orgTemplatesConn = getTemplateOrgConn(meetingSettings)
     safeRemoveNodeFromConn(templateId, orgTemplatesConn)
   }
   // not possible for the public list to get mutated because this is an org subscription
@@ -69,7 +69,7 @@ const addTemplateToScope = (template: RecordProxy, scope: SharingScopeEnum, meet
   if (scope === 'TEAM') {
     addNodeToArray(template, meetingSettings, 'teamTemplates')
   } else if (scope === 'ORGANIZATION') {
-    const orgTemplatesConn = getReflectTemplateOrgConn(meetingSettings)
+    const orgTemplatesConn = getTemplateOrgConn(meetingSettings,)
     putTemplateInConnection(template, orgTemplatesConn, store)
   }
 }

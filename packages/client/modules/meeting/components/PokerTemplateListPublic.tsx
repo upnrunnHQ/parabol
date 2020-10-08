@@ -52,7 +52,7 @@ export default createFragmentContainer(
           id
           meetingSettings(meetingType: poker) {
             ...on PokerMeetingSettings {
-              publicTemplates(first: 20) @connection(key: "PokerTemplateListPublic_publicTemplates"){
+              publicTemplates(first: 20) @connection(key: "pokerTemplateListPublic_publicTemplates"){
                 edges {
                   node {
                     ...PokerTemplateItem_template

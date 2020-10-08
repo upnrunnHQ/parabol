@@ -7031,6 +7031,11 @@ export interface IMutation {
   selectRetroTemplate: ISelectRetroTemplatePayload | null;
 
   /**
+   * Set the selected template for the upcoming poker meeting
+   */
+  selectPokerTemplate: ISelectPokerTemplatePayload | null;
+
+  /**
    * Share where in the app the viewer is
    */
   setAppLocation: SetAppLocationPayload;
@@ -7902,6 +7907,11 @@ export interface ISegmentEventTrackOnMutationArguments {
 }
 
 export interface ISelectRetroTemplateOnMutationArguments {
+  selectedTemplateId: string;
+  teamId: string;
+}
+
+export interface ISelectPokerTemplateOnMutationArguments {
   selectedTemplateId: string;
   teamId: string;
 }
@@ -9937,6 +9947,12 @@ export interface ISelectRetroTemplatePayload {
   retroMeetingSettings: IRetrospectiveMeetingSettings | null;
 }
 
+export interface ISelectPokerTemplatePayload {
+  __typename: 'SelectPokerTemplatePayload';
+  error: IStandardMutationError | null;
+  pokerMeetingSettings: IPokerMeetingSettings | null;
+}
+
 /**
  * Return object for SetAppLocationPayload
  */
@@ -10675,6 +10691,7 @@ export type TeamSubscriptionPayload =
   | IRemoveTeamMemberPayload
   | IRenameMeetingSuccess
   | ISelectRetroTemplatePayload
+  | ISelectPokerTemplatePayload
   | IStartNewMeetingPayload
   | IStartSprintPokerSuccess
   | IUpdateAgendaItemPayload

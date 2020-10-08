@@ -93,7 +93,7 @@ class EditablePokerTemplateName extends Component<Props> {
 
 export default createFragmentContainer(withAtmosphere(withMutationProps(EditablePokerTemplateName)), {
   teamTemplates: graphql`
-    fragment EditablePokerTemplateName_teamTemplates on SharableTemplate @relay(plural: true) {
+    fragment EditablePokerTemplateName_teamTemplates on PokerTemplate @relay(plural: true) {
       id
       name
     }

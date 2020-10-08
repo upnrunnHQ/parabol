@@ -5,11 +5,11 @@ import getRethink from '../../database/rethinkDriver'
 import {getUserId, isTeamMember} from '../../utils/authorization'
 import publish from '../../utils/publish'
 import standardError from '../../utils/standardError'
-import SelectRetroTemplatePayload from '../types/SelectRetroTemplatePayload'
+import SelectPokerTemplatePayload from '../types/SelectPokerTemplatePayload'
 
-const selectRetroTemplate = {
-  description: 'Set the selected template for the upcoming retro meeting',
-  type: SelectRetroTemplatePayload,
+const selectPokerTemplate = {
+  description: 'Set the selected template for the upcoming poker meeting',
+  type: SelectPokerTemplatePayload,
   args: {
     selectedTemplateId: {
       type: new GraphQLNonNull(GraphQLID)
@@ -54,7 +54,7 @@ const selectRetroTemplate = {
       .table('MeetingSettings')
       .getAll(teamId, {index: 'teamId'})
       .filter({
-        meetingType: MeetingTypeEnum.retrospective
+        meetingType: MeetingTypeEnum.poker
       })
       .update(
         {
@@ -66,13 +66,13 @@ const selectRetroTemplate = {
       .run()
 
     if (!meetingSettingsId) {
-      return standardError(new Error('Retro template already updated'), {userId: viewerId})
+      return standardError(new Error('Poker template already updated'), {userId: viewerId})
     }
 
     const data = {meetingSettingsId}
-    publish(SubscriptionChannel.TEAM, teamId, 'SelectRetroTemplatePayload', data, subOptions)
+    publish(SubscriptionChannel.TEAM, teamId, 'SelectPokerTemplatePayload', data, subOptions)
     return data
   }
 }
 
-export default selectRetroTemplate
+export default selectPokerTemplate
