@@ -21,6 +21,7 @@ import SwipeableDashSidebar from './SwipeableDashSidebar'
 import Icon from './Icon'
 import PlainButton from './PlainButton/PlainButton'
 import {PALETTE} from '~/styles/paletteV2'
+import PokerEstimateHeaderCardParabol from './PokerEstimateHeaderCardParabol'
 interface Props extends PokerMeetingPhaseProps {
   meeting: PokerEstimatePhase_meeting
 }
@@ -66,7 +67,6 @@ const PokerEstimatePhase = (props: Props) => {
   if (!localStage) return null
   const {story} = localStage
   const {__typename} = story!
-
   return (
     <MeetingContent ref={meetingContentRef}>
       <MeetingHeaderAndPhase hideBottomBar={!!endedAt}>
@@ -90,6 +90,7 @@ const PokerEstimatePhase = (props: Props) => {
           )}
         </Header>
         {__typename === 'JiraIssue' && <PokerEstimateHeaderCardJira stage={localStage as any} />}
+        {__typename === 'Task' && <PokerEstimateHeaderCardParabol stage={localStage as any} />}
         <PhaseWrapper>
           <EstimatePhaseArea meeting={meeting} />
         </PhaseWrapper>
@@ -116,6 +117,7 @@ const PokerEstimatePhase = (props: Props) => {
 graphql`
   fragment PokerEstimatePhaseStage on EstimateStage {
     ...PokerEstimateHeaderCardJira_stage
+    ...PokerEstimateHeaderCardParabol_stage
     story {
       __typename
     }
