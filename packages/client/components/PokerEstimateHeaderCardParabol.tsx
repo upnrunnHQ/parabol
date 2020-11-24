@@ -62,6 +62,13 @@ const StyledIcon = styled(Icon)({
   paddingLeft: 4
 })
 
+const IntegrationToggleWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  width: '100%'
+})
+
 interface Props {
   stage: PokerEstimateHeaderCardParabol_stage
 }
@@ -90,6 +97,7 @@ const PokerEstimateHeaderCardParabol = (props: Props) => {
               </CardButton>
             </CardIcons>
           </CardTitleWrapper>
+          <div>description</div>
           <StyledTaskIntegrationLink
             dataCy={`task`}
             integration={integration || null}
@@ -97,12 +105,16 @@ const PokerEstimateHeaderCardParabol = (props: Props) => {
           >
             <StyledIcon>launch</StyledIcon>
           </StyledTaskIntegrationLink>
-          <TaskFooterIntegrateToggle
-            dataCy={`task-integration`}
-            mutationProps={mutationProps}
-            task={task}
-            useTaskChild={useTaskChild}
-          />
+          <IntegrationToggleWrapper>
+            {!integration && 
+            <TaskFooterIntegrateToggle
+              dataCy={`task-integration`}
+              mutationProps={mutationProps}
+              task={task}
+              useTaskChild={useTaskChild}
+            />
+            }
+          </IntegrationToggleWrapper>
         </HeaderCard>
       </HeaderCardWrapper>
     </>
