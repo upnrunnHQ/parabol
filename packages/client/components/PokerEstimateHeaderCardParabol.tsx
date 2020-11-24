@@ -11,6 +11,8 @@ import useTaskChild from '~/hooks/useTaskChildFocus'
 import TaskFooterIntegrateToggle from '../modules/outcomeCard/components/OutcomeCardFooter/TaskFooterIntegrateToggle'
 import useMutationProps from '~/hooks/useMutationProps'
 import TaskIntegrationLink from '~/components/TaskIntegrationLink'
+import Icon from './Icon'
+import {ICON_SIZE} from '../styles/typographyV2'
 
 const HeaderCardWrapper = styled('div')({
   display: 'flex',
@@ -43,6 +45,23 @@ const CardTitleWrapper = styled('div')({
   width: '100%'
 })
 
+const StyledTaskIntegrationLink = styled(TaskIntegrationLink)({
+  color: PALETTE.LINK_BLUE,
+  display: 'flex',
+  fontSize: 12,
+  lineHeight: '20px',
+  textDecoration: 'none',
+  padding: '0 0',
+  '&:hover,:focus': {
+    textDecoration: 'none'
+  }
+})
+
+const StyledIcon = styled(Icon)({
+  fontSize: ICON_SIZE.MD18,
+  paddingLeft: 4
+})
+
 interface Props {
   stage: PokerEstimateHeaderCardParabol_stage
 }
@@ -71,7 +90,13 @@ const PokerEstimateHeaderCardParabol = (props: Props) => {
               </CardButton>
             </CardIcons>
           </CardTitleWrapper>
-          <TaskIntegrationLink dataCy={`task`} integration={integration || null} />
+          <StyledTaskIntegrationLink
+            dataCy={`task`}
+            integration={integration || null}
+            jiraLabelPrefix={false}
+          >
+            <StyledIcon>launch</StyledIcon>
+          </StyledTaskIntegrationLink>
           <TaskFooterIntegrateToggle
             dataCy={`task-integration`}
             mutationProps={mutationProps}

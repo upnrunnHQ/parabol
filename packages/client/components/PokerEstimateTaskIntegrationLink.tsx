@@ -3,48 +3,40 @@ import graphql from 'babel-plugin-relay/macro'
 import React, {ReactNode} from 'react'
 import {createFragmentContainer} from 'react-relay'
 import {PALETTE} from '../styles/paletteV2'
-import {Card} from '../types/constEnums'
 import {TaskServiceEnum} from '../types/graphql'
 import {TaskIntegrationLinkIntegrationJira} from '../__generated__/TaskIntegrationLinkIntegrationJira.graphql'
-import {TaskIntegrationLink_integration} from '../__generated__/TaskIntegrationLink_integration.graphql'
-import JiraIssueLink from './JiraIssueLink'
+import {PokerEstimateTaskIntegrationLink_integration} from '../__generated__/PokerEstimateTaskIntegrationLink_integration.graphql'
+import PokerEstimateJiraIssueLink from './PokerEstimateJiraIssueLink'
 
 const StyledLink = styled('a')({
-  color: PALETTE.TEXT_MAIN,
-  display: 'block',
-  fontSize: Card.FONT_SIZE,
-  lineHeight: '1.25rem',
-  padding: `0 ${Card.PADDING}`,
-  textDecoration: 'underline',
-  '&:hover,:focus': {
-    textDecoration: 'underline'
-  }
+  color: PALETTE.LINK_BLUE,
+  display: 'flex',
+  fontSize: 12,
+  lineHeight: '20px',
+  textDecoration: 'none'
 })
 
 interface Props {
-  integration: TaskIntegrationLink_integration | null
+  integration: PokerEstimateTaskIntegrationLink_integration | null
   dataCy: string
-  className?: string
   children?: ReactNode
-  jiraLabelPrefix?: boolean
 }
 
-const TaskIntegrationLink = (props: Props) => {
-  const {integration, dataCy, className, children, jiraLabelPrefix} = props
+const PokerEstimateTaskIntegrationLink = (props: Props) => {
+  const {integration, dataCy, children} = props
   if (!integration) return null
   const {service} = integration
   if (service === TaskServiceEnum.jira) {
     const {issueKey, projectKey, cloudName} = integration as unknown as TaskIntegrationLinkIntegrationJira
     return (
-      <JiraIssueLink
-        className={className}
+      <PokerEstimateJiraIssueLink
         dataCy={`${dataCy}-jira-issue-link`}
         issueKey={issueKey}
         projectKey={projectKey}
         cloudName={cloudName}
-        children={children}
-        labelPrefix={jiraLabelPrefix}
-      />
+      >
+        {children}
+      </PokerEstimateJiraIssueLink>
     )
   } else if (service === TaskServiceEnum.github) {
     const {nameWithOwner, issueNumber} = integration
@@ -54,7 +46,6 @@ const TaskIntegrationLink = (props: Props) => {
         : `https://www.github.com/${nameWithOwner}/issues/${issueNumber}`
     return (
       <StyledLink
-        className={className}
         href={href}
         rel='noopener noreferrer'
         target='_blank'
@@ -68,24 +59,9 @@ const TaskIntegrationLink = (props: Props) => {
   return null
 }
 
-graphql`
-  fragment TaskIntegrationLinkIntegrationJira on TaskIntegrationJira {
-    issueKey
-    projectKey
-    cloudName
-  }
-`
-
-graphql`
-  fragment TaskIntegrationLinkIntegrationGitHub on TaskIntegrationGitHub {
-    issueNumber
-    nameWithOwner
-  }
-`
-
-export default createFragmentContainer(TaskIntegrationLink, {
+export default createFragmentContainer(PokerEstimateTaskIntegrationLink, {
   integration: graphql`
-    fragment TaskIntegrationLink_integration on TaskIntegration {
+    fragment PokerEstimateTaskIntegrationLink_integration on TaskIntegration {
       service
       ...TaskIntegrationLinkIntegrationGitHub @relay(mask: false)
       ...TaskIntegrationLinkIntegrationJira @relay(mask: false)

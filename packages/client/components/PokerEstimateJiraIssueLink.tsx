@@ -1,18 +1,13 @@
 import styled from '@emotion/styled'
 import React, {ReactNode} from 'react'
 import {PALETTE} from '../styles/paletteV2'
-import {Card} from '../types/constEnums'
 
 const StyledLink = styled('a')({
-  color: PALETTE.TEXT_MAIN,
-  display: 'block',
-  fontSize: Card.FONT_SIZE,
-  lineHeight: '1.25rem',
-  padding: `0 ${Card.PADDING}`,
-  textDecoration: 'underline',
-  '&:hover,:focus': {
-    textDecoration: 'underline'
-  }
+  color: PALETTE.LINK_BLUE,
+  display: 'flex',
+  fontSize: 12,
+  lineHeight: '20px',
+  textDecoration: 'none'
 })
 
 interface Props {
@@ -22,11 +17,10 @@ interface Props {
   issueKey: string
   projectKey: string
   children?: ReactNode
-  labelPrefix?: boolean
 }
 
-const JiraIssueLink = (props: Props) => {
-  const {dataCy, className, cloudName, issueKey, projectKey, children, labelPrefix=true} = props
+const PokerEstimateJiraIssueLink = (props: Props) => {
+  const {dataCy, className, cloudName, issueKey, projectKey, children} = props
   const href =
     cloudName === 'jira-demo'
       ? 'https://www.parabol.co/features/integrations'
@@ -40,10 +34,10 @@ const JiraIssueLink = (props: Props) => {
       target='_blank'
       title={`Jira Issue #${issueKey} on ${projectKey}`}
     >
-      {`${labelPrefix ? 'Issue #': ''}${issueKey}`}
+      {`${issueKey}`}
       {children}
     </StyledLink>
   )
 }
 
-export default JiraIssueLink
+export default PokerEstimateJiraIssueLink
