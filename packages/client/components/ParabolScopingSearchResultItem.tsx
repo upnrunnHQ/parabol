@@ -9,6 +9,7 @@ import UpdatePokerScopeMutation from '~/mutations/UpdatePokerScopeMutation'
 import {TaskServiceEnum} from '~/types/graphql'
 import {AddOrDeleteEnum} from '~/types/graphql'
 import useMutationProps from '~/hooks/useMutationProps'
+import getTaskTitle from '~/utils/getTaskTitle'
 
 const Item = styled('div')({
   display: 'flex',
@@ -32,7 +33,7 @@ interface Props {
 const ParabolScopingSearchResultItem = (props: Props) => {
   const {task, meetingId, isSelected} = props
   const {id: serviceTaskId, plaintextContent} = task
-  const snippet = plaintextContent.split('\n')[0]
+  const title = getTaskTitle(plaintextContent)
   const atmosphere = useAtmosphere()
   const {onCompleted, onError, submitMutation, submitting} = useMutationProps()
   const onClick = () => {
@@ -54,7 +55,7 @@ const ParabolScopingSearchResultItem = (props: Props) => {
     <Item onClick={onClick}>
       <Checkbox active={isSelected} />
       <Issue>
-        <Title>{snippet}</Title>
+        <Title>{title}</Title>
       </Issue>
     </Item>
   )

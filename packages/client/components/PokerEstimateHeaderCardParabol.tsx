@@ -13,6 +13,7 @@ import useMutationProps from '~/hooks/useMutationProps'
 import TaskIntegrationLink from '~/components/TaskIntegrationLink'
 import Icon from './Icon'
 import {ICON_SIZE} from '../styles/typographyV2'
+import getTaskTitle from '~/utils/getTaskTitle'
 
 const HeaderCardWrapper = styled('div')({
   display: 'flex',
@@ -84,13 +85,14 @@ const PokerEstimateHeaderCardParabol = (props: Props) => {
     submitMutation,
     submitting
   }
+  const title = getTaskTitle(plaintextContent!)
 
   return (
     <>
       <HeaderCardWrapper>
         <HeaderCard>
           <CardTitleWrapper>
-            <CardTitle>{plaintextContent}</CardTitle>
+            <CardTitle>{title}</CardTitle>
             <CardIcons>
               <CardButton>
                 <IconLabel icon='unfold_more' onClick={() => console.log('click')} />

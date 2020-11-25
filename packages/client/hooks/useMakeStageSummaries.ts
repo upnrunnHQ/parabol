@@ -2,6 +2,7 @@ import graphql from 'babel-plugin-relay/macro'
 import {useMemo} from 'react'
 import {readInlineData} from 'react-relay'
 import {useMakeStageSummaries_phase} from '../__generated__/useMakeStageSummaries_phase.graphql'
+import getTaskTitle from '~/utils/getTaskTitle'
 
 interface StageSummary {title: string, isComplete: boolean, isNavigable: boolean, isActive: boolean, sortOrder: number, stageIds: string[]}
 
@@ -43,8 +44,11 @@ const useMakeStageSummaries = (phaseRef: any, localStageId: string) => {
         if (nextStage.story.id !== storyId) break
         batch.push(nextStage)
       }
+      const title = story.plaintextContent ?
+        getTaskTitle(story.plaintextContent) :
+        story.summary
       summaries.push({
-        title: story.plaintextContent?.split('\n')[0] || story.summary || 'Unknown story',
+        title: title || 'Unknown story',
         isComplete: batch.every(({isComplete}) => isComplete),
         isNavigable: batch.some(({isNavigable}) => isNavigable),
         isActive: !!batch.find(({id}) => id === localStageId),
