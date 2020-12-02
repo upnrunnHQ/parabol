@@ -8,7 +8,6 @@ import Tab from '../../../components/Tab/Tab'
 import Tabs from '../../../components/Tabs/Tabs'
 import {desktopSidebarShadow} from '../../../styles/elevation'
 import {PALETTE} from '../../../styles/paletteV2'
-import {Threshold} from '../../../types/constEnums'
 import {ReflectTemplateList_settings} from '../../../__generated__/ReflectTemplateList_settings.graphql'
 import AddNewReflectTemplate from './AddNewReflectTemplate'
 import ReflectTemplateListOrgRoot from './ReflectTemplateListOrgRoot'
@@ -128,6 +127,11 @@ const ReflectTemplateList = (props: Props) => {
         style={innerStyle}
       >
         <TabContents>
+          <AddNewReflectTemplate
+            teamId={teamId}
+            reflectTemplates={teamTemplates}
+            gotoTeamTemplates={gotoTeamTemplates}
+          />
           <ReflectTemplateListTeam
             selectedTemplateId={selectedTemplateId}
             showPublicTemplates={gotoPublicTemplates}
@@ -137,20 +141,23 @@ const ReflectTemplateList = (props: Props) => {
           />
         </TabContents>
         <TabContents>
+          <AddNewReflectTemplate
+            teamId={teamId}
+            reflectTemplates={teamTemplates}
+            gotoTeamTemplates={gotoTeamTemplates}
+          />
           <ReflectTemplateListOrgRoot teamId={teamId} isActive={activeIdx === 1} />
         </TabContents>
         <TabContents>
+          <AddNewReflectTemplate
+            teamId={teamId}
+            reflectTemplates={teamTemplates}
+            gotoTeamTemplates={gotoTeamTemplates}
+          />
           <ReflectTemplateListPublicRoot teamId={teamId} isActive={activeIdx === 2} />
         </TabContents>
       </SwipeableViews>
       {/* add a key to clear the error when they change */}
-      {teamTemplates.length < Threshold.MAX_RETRO_TEAM_TEMPLATES && (
-        <AddNewReflectTemplate
-          teamId={teamId}
-          reflectTemplates={teamTemplates}
-          gotoTeamTemplates={gotoTeamTemplates}
-        />
-      )}
     </TemplateSidebar>
   )
 }

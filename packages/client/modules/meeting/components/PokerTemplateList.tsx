@@ -3,7 +3,6 @@ import graphql from 'babel-plugin-relay/macro'
 import React from 'react'
 import {createFragmentContainer} from 'react-relay'
 import SwipeableViews from 'react-swipeable-views'
-import {Threshold} from '../../../types/constEnums'
 import Icon from '../../../components/Icon'
 import Tab from '../../../components/Tab/Tab'
 import Tabs from '../../../components/Tabs/Tabs'
@@ -127,6 +126,7 @@ const PokerTemplateList = (props: Props) => {
         style={innerStyle}
       >
         <TabContents>
+          <AddNewPokerTemplate teamId={teamId} pokerTemplates={teamTemplates} gotoTeamTemplates={gotoTeamTemplates} />
           <PokerTemplateListTeam
             selectedTemplateId={selectedTemplateId}
             showPublicTemplates={gotoPublicTemplates}
@@ -136,16 +136,15 @@ const PokerTemplateList = (props: Props) => {
           />
         </TabContents>
         <TabContents>
+          <AddNewPokerTemplate teamId={teamId} pokerTemplates={teamTemplates} gotoTeamTemplates={gotoTeamTemplates} />
           <PokerTemplateListOrgRoot teamId={teamId} isActive={activeIdx === 1} />
         </TabContents>
         <TabContents>
+          <AddNewPokerTemplate teamId={teamId} pokerTemplates={teamTemplates} gotoTeamTemplates={gotoTeamTemplates} />
           <PokerTemplateListPublicRoot teamId={teamId} isActive={activeIdx === 2} />
         </TabContents>
       </SwipeableViews>
       {/* add a key to clear the error when they change */}
-      {teamTemplates.length < Threshold.MAX_POKER_TEAM_TEMPLATES && (
-        <AddNewPokerTemplate teamId={teamId} pokerTemplates={teamTemplates} gotoTeamTemplates={gotoTeamTemplates} />
-      )}
     </TemplateSidebar>
   )
 }
