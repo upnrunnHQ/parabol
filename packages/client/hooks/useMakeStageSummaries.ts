@@ -2,9 +2,8 @@ import graphql from 'babel-plugin-relay/macro'
 import {useMemo} from 'react'
 import {readInlineData} from 'react-relay'
 import {useMakeStageSummaries_phase} from '../__generated__/useMakeStageSummaries_phase.graphql'
-import getTaskTitle from '~/utils/getTaskTitle'
 
-interface StageSummary {title: string, isComplete: boolean, isNavigable: boolean, isActive: boolean, sortOrder: number, stageIds: string[]}
+interface StageSummary {title: string, isComplete: boolean, isNavigable: boolean, isActive: boolean, sortOrder: number, stageIds: string[], finalScores: (string | null)[]}
 
 const useMakeStageSummaries = (phaseRef: any, localStageId: string) => {
   const estimatePhase = readInlineData<useMakeStageSummaries_phase>(
@@ -13,17 +12,14 @@ const useMakeStageSummaries = (phaseRef: any, localStageId: string) => {
         phaseType
         stages {
           id
+          finalScore
           isComplete
           isNavigable
           sortOrder
+          serviceTaskId
           story {
             id
-            ... on JiraIssue {
-              summary
-            }
-            ... on Task {
-              plaintextContent
-            }
+            title
           }
         }
       }
@@ -36,26 +32,23 @@ const useMakeStageSummaries = (phaseRef: any, localStageId: string) => {
     const summaries = [] as StageSummary[]
     for (let i = 0; i < stages.length; i++) {
       const stage = stages[i]
-      const {story} = stage
-      const {id: storyId} = story
+      const {serviceTaskId, story} = stage
       const batch = [stage]
       for (let j = i + 1; j < stages.length; j++) {
         const nextStage = stages[j]
-        if (nextStage.story.id !== storyId) break
+        if (nextStage.serviceTaskId !== serviceTaskId) break
         batch.push(nextStage)
       }
-      const title = story.plaintextContent ?
-        getTaskTitle(story.plaintextContent) :
-        story.summary
       summaries.push({
-        title: title || 'Unknown story',
+        title: story?.title ?? 'Unknown Story',
         isComplete: batch.every(({isComplete}) => isComplete),
         isNavigable: batch.some(({isNavigable}) => isNavigable),
         isActive: !!batch.find(({id}) => id === localStageId),
         sortOrder: stage.sortOrder,
-        stageIds: batch.map(({id}) => id)
+        stageIds: batch.map(({id}) => id),
+        finalScores: batch.map(({finalScore}) => finalScore)
       })
-      serviceTaskSet.add(storyId)
+      serviceTaskSet.add(serviceTaskId)
       i += batch.length - 1
     }
     return summaries

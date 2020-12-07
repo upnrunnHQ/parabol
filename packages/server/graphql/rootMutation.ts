@@ -118,6 +118,8 @@ import updateTeamName from './mutations/updateTeamName'
 import updateTemplateScope from './mutations/updateTemplateScope'
 import updateUserProfile from './mutations/updateUserProfile'
 import upgradeToPro from './mutations/upgradeToPro'
+import uploadOrgImage from './mutations/uploadOrgImage'
+import uploadUserImage from './mutations/uploadUserImage'
 import verifyEmail from './mutations/verifyEmail'
 import voteForReflectionGroup from './mutations/voteForReflectionGroup'
 import updatePokerScope from './mutations/updatePokerScope'
@@ -128,6 +130,7 @@ import pokerRevealVotes from './mutations/pokerRevealVotes'
 import pokerResetDimension from './mutations/pokerResetDimension'
 import pokerAnnounceDeckHover from './mutations/pokerAnnounceDeckHover'
 import pokerSetFinalScore from './mutations/pokerSetFinalScore'
+import updateJiraDimensionField from './mutations/updateJiraDimensionField'
 import persistJiraSearchQuery from './mutations/persistJiraSearchQuery'
 
 interface Context extends InternalContext, GQLContext {}
@@ -260,13 +263,16 @@ export default new GraphQLObjectType<any, Context>({
       updateTeamName,
       updateTemplateScope,
       updateUserProfile,
+      upgradeToPro,
+      uploadOrgImage,
+      uploadUserImage,
       verifyEmail,
       voteForReflectionGroup,
-      upgradeToPro,
       voteForPokerStory,
       pokerRevealVotes,
       pokerResetDimension,
       pokerAnnounceDeckHover,
-      pokerSetFinalScore
+      pokerSetFinalScore,
+      updateJiraDimensionField
     } as any)
 })
